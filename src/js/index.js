@@ -80,38 +80,48 @@ export default function index() {
 
   function handleVideo(stream) {
     // video.src = 
-    require('resl')({
-      manifest: {
-        video: {
-          type: 'video',
-          src: window.URL.createObjectURL(stream),
-          stream: true
-        }
-      },
+    const video = document.createElement("video");
 
-      onDone: ({video}) => {
-        video.autoplay = true
-        video.loop = true
-        video.play()
-
-        const texture = regl.texture(video)
-        regl.frame(({time}) => {
-          regl.clear({
-            color: [0, 0, 0, 0],
-            depth: 1
-          })
-          const texture = regl.texture(video)
-          drawTriangle({
-            color: [
-              Math.cos(time * 10),
-              Math.sin(time * 8),
-              Math.cos(time * 30),
-              1
-            ],
-            video: texture.subimage(video),
-          })
-        })
+    var canPlay = false
+    var loadedMetaData = false
+    video.addEventListener('loadedmetadata', function () {
+      loadedMetaData = true
+      if (canPlay) {
+        onComplete()
       }
     })
+    video.addEventListener('canplay', function () {
+      canPlay = true
+      if (loadedMetaData) {
+        onComplete()
+      }
+    })
+
+    function onComplete() {
+      console.log("loaded");
+      video.autoplay = true
+      video.loop = true
+      video.play()
+
+      const texture = regl.texture(video)
+      regl.frame(({time}) => {
+        regl.clear({
+          color: [0, 0, 0, 0],
+          depth: 1
+        })
+        const texture = regl.texture(video)
+        drawTriangle({
+          color: [
+            Math.cos(time * 10),
+            Math.sin(time * 8),
+            Math.cos(time * 30),
+            1
+          ],
+          video: texture.subimage(video),
+        })
+      })
+    }
+
+    video.srcObject = stream;
   }
 }
