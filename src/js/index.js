@@ -104,10 +104,12 @@ export default function index() {
     video.srcObject = stream;
 
     function onComplete() {
-      console.log("ready");
+      console.log("ready2");
       document.body.addEventListener("click", start);
+      document.body.addEventListener("touchstart", start);
       function start(){
         document.body.removeEventListener("click", start);
+        document.body.removeEventListener("touchstart", start);
         console.log("start");
         video.play()
         const texture = regl.texture(video)
