@@ -1,5 +1,12 @@
 export default function index() {
-  navigator.getUserMedia({video: true}, handleVideo, e => console.error(e));
+  window.addEventListener("touchstart", start);
+  window.addEventListener("mousedown", start);
+
+  function start(){
+    navigator.getUserMedia({video: true}, handleVideo, e => console.error(e));
+    window.removeEventListener("touchstart", start);
+    window.removeEventListener("mousedown", start);
+  }
 
   // Calling the regl module with no arguments creates a full screen canvas and
   // WebGL context, and then uses this context to initialize a new REGL instance
@@ -96,6 +103,7 @@ export default function index() {
         onComplete()
       }
     })
+    video.crossOrigin = 'anonymous'
 
     function onComplete() {
       console.log("loaded");
