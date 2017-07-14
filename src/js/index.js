@@ -64,9 +64,9 @@ export default function index() {
     void main() {
       vec2 dc = vec2(.5, .5) + vec2(cos(time), sin(time)) * .3;
       vec2 dc2 = vec2(.5, .5) + vec2(cos(-time * 2.), sin(-time * 2.)) * .2;
-      vec3 tex = texture2D(texture, distorted(distorted(uv, dc, 2.), dc2, .3)).xyz;
+      vec3 tex = texture2D(texture, distorted(distorted(uv, dc, 2.), dc2, -.3)).xyz;
       vec3 hsv = rgb2hsv(tex);
-      if(0. < hsv[0] && hsv[0] < .1) {
+      if(0. < hsv[0] && hsv[0] < .1 && .8 > hsv[2] && hsv[2] > .5) {
         gl_FragColor = vec4(color.xyz, 1.);
       } else {
         gl_FragColor = vec4(tex, 1.);
