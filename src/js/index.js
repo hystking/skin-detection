@@ -103,12 +103,14 @@ export default function index() {
         onComplete()
       }
     })
+    video.muted = true;
+    video.autoplay = true
+    video.loop = true
     video.crossOrigin = 'anonymous'
+    video.srcObject = stream;
 
     function onComplete() {
       console.log("loaded");
-      video.autoplay = true
-      video.loop = true
       video.play()
 
       const texture = regl.texture(video)
@@ -129,7 +131,5 @@ export default function index() {
         })
       })
     }
-
-    video.srcObject = stream;
   }
 }
