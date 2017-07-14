@@ -102,6 +102,8 @@ export default function index() {
     video.loop = true
     video.crossOrigin = 'anonymous'
     video.srcObject = stream;
+    video.webkitPlaysinline = true;
+    video.playsinline = true;
 
     function onComplete() {
       console.log("ready2");
