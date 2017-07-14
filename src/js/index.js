@@ -108,6 +108,7 @@ export default function index() {
       document.body.addEventListener("click", start);
       function start(){
         document.body.removeEventListener("click", start);
+        console.log("start");
         video.play()
         const texture = regl.texture(video)
         regl.frame(({time}) => {
