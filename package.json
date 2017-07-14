@@ -21,6 +21,8 @@
     "live-server": "hystking/live-server",
     "postcss-cli": "^3.0.0-beta",
     "pug-cli": "^1.0.0-alpha6",
+    "regl": "^1.3.0",
+    "resl": "^1.0.3",
     "uglify-js": "^2.7.5",
     "watchify": "^3.8.0"
   },
