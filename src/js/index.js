@@ -32,6 +32,7 @@ export default function index() {
     precision mediump float;
     uniform sampler2D texture;
     uniform vec4 color;
+    uniform float time;
     varying vec2 uv;
 
     vec3 rgb2hsv(vec3 c) {
@@ -44,10 +45,28 @@ export default function index() {
       return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
     }
 
+    vec2 distorted(vec2 p, vec2 centre, float freq){
+      vec2 v = p - centre;
+      // Convert to polar coords:
+      float theta  = atan(v.y,v.x);
+      float radius = length(v);
+
+      // Distort:
+      radius = pow(radius, 1. + sin(time * freq) * .5) * .7;
+
+      // Convert back to Cartesian:
+      v.x = radius * cos(theta);
+      v.y = radius * sin(theta);
+
+      return v + centre;
+    }
+
     void main() {
-      vec3 tex = texture2D(texture, uv).xyz;
+      vec2 dc = vec2(.5, .5) + vec2(cos(time), sin(time)) * .3;
+      vec2 dc2 = vec2(.5, .5) + vec2(cos(-time * 2.), sin(-time * 2.)) * .2;
+      vec3 tex = texture2D(texture, distorted(distorted(uv, dc, 2.), dc2, .3)).xyz;
       vec3 hsv = rgb2hsv(tex);
-      if(0. < hsv[0] && hsv[0] < .3) {
+      if(0. < hsv[0] && hsv[0] < .1) {
         gl_FragColor = vec4(color.xyz, 1.);
       } else {
         gl_FragColor = vec4(tex, 1.);
@@ -73,6 +92,7 @@ export default function index() {
       // This defines the color of the triangle to be a dynamic variable
       color: regl.prop('color'),
       texture: regl.prop('video'),
+      time: regl.prop('time'),
     },
 
     // This tells regl the number of vertices to draw in this command
@@ -137,6 +157,7 @@ export default function index() {
               1
             ],
             video: texture.subimage(video),
+            time: time,
           })
         })
       }
