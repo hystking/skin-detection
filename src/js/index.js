@@ -104,6 +104,8 @@ export default function index() {
     video.srcObject = stream;
     video.webkitPlaysinline = true;
     video.playsinline = true;
+    video.controls = false;
+    video.style.objectFit = 'initial';
 
     function onComplete() {
       console.log("ready2");
