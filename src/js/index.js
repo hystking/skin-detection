@@ -106,6 +106,11 @@ export default function index() {
     video.playsinline = true;
     video.controls = false;
     video.style.objectFit = 'initial';
+    video.style.position = 'absolute'
+    video.style.top = '0px'
+    video.style.left = '0px'
+    video.style.zIndex = '-2'
+    document.body.appendChild(video);
 
     function onComplete() {
       console.log("ready2");
