@@ -105,10 +105,11 @@ export default function index() {
 
     function onComplete() {
       console.log("ready2");
-      document.body.addEventListener("click", start);
+      document.body.addEventListener("mousedown", start);
       document.body.addEventListener("touchstart", start);
-      function start(){
-        document.body.removeEventListener("click", start);
+      function start(e){
+        e.preventDefault();
+        document.body.removeEventListener("mousedown", start);
         document.body.removeEventListener("touchstart", start);
         console.log("start");
         video.play()
