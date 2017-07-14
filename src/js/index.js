@@ -80,8 +80,6 @@ export default function index() {
   })
 
   function handleVideo(stream) {
-    // video.src = 
-    const video = document.createElement("video");
 
     var canPlay = false
     var loadedMetaData = false
@@ -97,6 +95,7 @@ export default function index() {
         onComplete()
       }
     })
+    console.log(video)
     video.muted = true;
     video.autoplay = true
     video.loop = true
