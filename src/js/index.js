@@ -1,12 +1,6 @@
 export default function index() {
-  window.addEventListener("touchstart", start);
-  window.addEventListener("mousedown", start);
 
-  function start(){
-    navigator.getUserMedia({video: true}, handleVideo, e => console.error(e));
-    window.removeEventListener("touchstart", start);
-    window.removeEventListener("mousedown", start);
-  }
+  navigator.getUserMedia({video: true}, handleVideo, e => console.error(e));
 
   // Calling the regl module with no arguments creates a full screen canvas and
   // WebGL context, and then uses this context to initialize a new REGL instance
@@ -110,26 +104,30 @@ export default function index() {
     video.srcObject = stream;
 
     function onComplete() {
-      console.log("loaded");
-      video.play()
 
-      const texture = regl.texture(video)
-      regl.frame(({time}) => {
-        regl.clear({
-          color: [0, 0, 0, 0],
-          depth: 1
-        })
+      document.body.addEventListener("click", start);
+      function start(){
+        document.body.removeEventListener("click", start);
+        video.play()
         const texture = regl.texture(video)
-        drawTriangle({
-          color: [
-            Math.cos(time * 10),
-            Math.sin(time * 8),
-            Math.cos(time * 30),
-            1
-          ],
-          video: texture.subimage(video),
+        regl.frame(({time}) => {
+          regl.clear({
+            color: [0, 0, 0, 0],
+            depth: 1
+          })
+          const texture = regl.texture(video)
+          drawTriangle({
+            color: [
+              Math.cos(time * 10),
+              Math.sin(time * 8),
+              Math.cos(time * 30),
+              1
+            ],
+            video: texture.subimage(video),
+          })
         })
-      })
+      }
     }
+
   }
 }
