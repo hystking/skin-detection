@@ -104,7 +104,7 @@ export default function index() {
     video.srcObject = stream;
 
     function onComplete() {
-
+      console.log("ready");
       document.body.addEventListener("click", start);
       function start(){
         document.body.removeEventListener("click", start);
