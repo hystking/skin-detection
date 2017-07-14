@@ -123,11 +123,12 @@ export default function index() {
         video.play()
         const texture = regl.texture(video)
         regl.frame(({time}) => {
+          /*
           regl.clear({
             color: [0, 0, 0, 0],
             depth: 1
           })
-          const texture = regl.texture(video)
+          */
           drawTriangle({
             color: [
               Math.cos(time * 10),
