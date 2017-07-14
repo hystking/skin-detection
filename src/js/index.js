@@ -1,4 +1,6 @@
 export default function index() {
+  navigator.getUserMedia({video: true}, handleVideo, e => console.error(e));
+
   // Calling the regl module with no arguments creates a full screen canvas and
   // WebGL context, and then uses this context to initialize a new REGL instance
   const regl = require('regl')()
@@ -27,10 +29,28 @@ export default function index() {
 
     frag: `
     precision mediump float;
+    uniform sampler2D texture;
     uniform vec4 color;
     varying vec2 uv;
+
+    vec3 rgb2hsv(vec3 c) {
+      vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+      vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+      vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+      float d = q.x - min(q.w, q.y);
+      float e = 1.0e-10;
+      return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+    }
+
     void main() {
-      gl_FragColor = vec4(color.xyz * uv.x * uv.y, 1.);
+      vec3 tex = texture2D(texture, uv).xyz;
+      vec3 hsv = rgb2hsv(tex);
+      if(0. < hsv[0] && hsv[0] < .3) {
+        gl_FragColor = vec4(color.xyz, 1.);
+      } else {
+        gl_FragColor = vec4(tex, 1.);
+      }
     }`,
 
     // Here we define the vertex attributes for the above shader
@@ -50,29 +70,48 @@ export default function index() {
 
     uniforms: {
       // This defines the color of the triangle to be a dynamic variable
-      color: regl.prop('color')
+      color: regl.prop('color'),
+      texture: regl.prop('video'),
     },
 
     // This tells regl the number of vertices to draw in this command
     count: 6
   })
 
-  // regl.frame() wraps requestAnimationFrame and also handles viewport changes
-  regl.frame(({time}) => {
-    // clear contents of the drawing buffer
-    regl.clear({
-      color: [0, 0, 0, 0],
-      depth: 1
-    })
+  function handleVideo(stream) {
+    // video.src = 
+    require('resl')({
+      manifest: {
+        video: {
+          type: 'video',
+          src: window.URL.createObjectURL(stream),
+          stream: true
+        }
+      },
 
-    // draw a triangle using the command defined above
-    drawTriangle({
-      color: [
-        Math.cos(time * 1),
-        Math.sin(time * 0.8),
-        Math.cos(time * 3),
-        1
-      ]
+      onDone: ({video}) => {
+        video.autoplay = true
+        video.loop = true
+        video.play()
+
+        const texture = regl.texture(video)
+        regl.frame(({time}) => {
+          regl.clear({
+            color: [0, 0, 0, 0],
+            depth: 1
+          })
+          const texture = regl.texture(video)
+          drawTriangle({
+            color: [
+              Math.cos(time * 10),
+              Math.sin(time * 8),
+              Math.cos(time * 30),
+              1
+            ],
+            video: texture.subimage(video),
+          })
+        })
+      }
     })
-  })
+  }
 }
